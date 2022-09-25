@@ -2,10 +2,9 @@
   "name": "api-project-dev",
   "scripts": {
     "format": "prettier --write .",
-    "lint" : "eslint src/ --cache --fix",
+    "lint": "eslint src/ --cache --fix",
     "test": "jest",
     "build": "tsc"
-
   },
   "engines": {
     "node": ">=16"
@@ -20,6 +19,7 @@
   "homepage": "https://github.com/italoubialifernando/api-project-dev#readme",
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
+    "@types/jest": "^29.0.3",
     "@types/node": "^18.7.21",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
@@ -27,6 +27,7 @@
     "eslint-config-prettier": "^8.5.0",
     "jest": "^29.0.3",
     "prettier": "2.7.1",
+    "ts-jest": "^29.0.2",
     "typescript": "^4.8.3"
   }
 }

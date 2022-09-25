@@ -1,7 +1,7 @@
 {
   "name": "api-project-dev",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "engines": {
     "node": ">=16"
@@ -10,9 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/italoubialifernando/api-project-dev.git"
   },
-  
   "bugs": {
     "url": "https://github.com/italoubialifernando/api-project-dev/issues"
   },
-  "homepage": "https://github.com/italoubialifernando/api-project-dev#readme"
+  "homepage": "https://github.com/italoubialifernando/api-project-dev#readme",
+  "devDependencies": {
+    "jest": "^29.0.3"
+  }
 }

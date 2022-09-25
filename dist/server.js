@@ -1,3 +1,5 @@
 "use strict";
-const nome = "Italo";
-console.log(`Hello ${nome}`);
+const name = "Italo";
+throw new Error("somenthing got wrong");
+console.log(`Hello ${name}`);
+//# sourceMappingURL=server.js.map

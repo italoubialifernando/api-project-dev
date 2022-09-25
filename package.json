@@ -1,0 +1,18 @@
+{
+  "name": "api-project-dev",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/italoubialifernando/api-project-dev.git"
+  },
+  
+  "bugs": {
+    "url": "https://github.com/italoubialifernando/api-project-dev/issues"
+  },
+  "homepage": "https://github.com/italoubialifernando/api-project-dev#readme"
+}

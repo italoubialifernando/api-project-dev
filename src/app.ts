@@ -47,6 +47,42 @@ app.post(
     }
 );
 
+app.put(
+    "/planets/:id(\\d+)",
+    validate({ body: planetSchema }),
+    async (request, response, next) => {
+        const planetId = Number(request.params.id);
+        const planetData: PlanetData = request.body;
+
+        try {
+            const planet = await prisma.planet.update({
+                where: { id: planetId },
+                data: planetData,
+            });
+
+            response.status(200).json(planet);
+        } catch (e) {
+            response.status(404);
+            next("Cannot PUT /planets/" + planetId);
+        }
+    }
+);
+
+app.delete("/planet/:id(\\d+)", async (request, response, next) => {
+    const planetId = Number(request.params.id);
+
+    try {
+        await prisma.planet.delete({
+            where: { id: planetId },
+        });
+
+        response.status(204).end();
+    } catch (e) {
+        response.status(404);
+        next("Cannot DELETE /planet/" + planetId);
+    }
+});
+
 app.use(ValidationErrorMiddleware);
 
 export default app;

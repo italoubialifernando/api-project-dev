@@ -33,7 +33,8 @@ describe("GET /planets", () => {
         const response = await request
             .get("/planets")
             .expect(200)
-            .expect("Content-Type", /application\/json/);
+            .expect("Content-Type", /application\/json/)
+            .expect("Access-Control-Allow-Origin", "http://localhost:8080");
 
         expect(response.body).toEqual(planets);
     });
@@ -106,7 +107,8 @@ describe("POST /planets", () => {
                 moons: 0,
             })
             .expect(201)
-            .expect("Content-Type", /application\/json/);
+            .expect("Content-Type", /application\/json/)
+            .expect("Access-Control-Allow-Origin", "http://localhost:8080");
 
         expect(response.body).toEqual(planet);
     });
@@ -155,7 +157,8 @@ describe("PUT /planets/:id", () => {
                 moons: 0,
             })
             .expect(200)
-            .expect("Content-Type", /application\/json/);
+            .expect("Content-Type", /application\/json/)
+            .expect("Access-Control-Allow-Origin", "http://localhost:8080");
 
         expect(response.body).toEqual(planet);
     });
@@ -215,7 +218,10 @@ describe("PUT /planets/:id", () => {
 
 describe("DELETE /planet/:id", () => {
     test("Valid request", async () => {
-        const response = await request.delete("/planet/1").expect(204);
+        const response = await request
+            .delete("/planet/1")
+            .expect(204)
+            .expect("Access-Control-Allow-Origin", "http://localhost:8080");
 
         expect(response.text).toEqual("");
     });
@@ -239,5 +245,33 @@ describe("DELETE /planet/:id", () => {
             .expect("Content-Type", /text\/html/);
 
         expect(response.text).toContain("Cannot DELETE /planet/oafna");
+    });
+});
+
+describe("POST /planets/:id/photo", () => {
+    test("Valid request with png file upload", async () => {
+        await request
+            .post("/planets/23/photo")
+            .attach("photo", "test-fixtures/photos/file.png")
+            .expect(201)
+            .expect("Access-Control-Allow-Origin", "http://localhost:8080");
+    });
+
+    test("invalid planet ID", async () => {
+        const response = await request
+            .post("/planets/asdf/photo")
+            .expect(404)
+            .expect("Content-Type", /text\/html/);
+
+        expect(response.text).toContain("Cannot POST /planets/asdf/photo");
+    });
+
+    test("Invalid request with no file upload", async () => {
+        const response = await request
+            .post("/planets/35/photo")
+            .expect(400)
+            .expect("Content-Type", /text\/html/);
+
+        expect(response.text).toContain("No photo file upload");
     });
 });

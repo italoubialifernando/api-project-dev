@@ -8,7 +8,8 @@
     "build:dev": "tsc --watch",
     "start": "node --enable-source-maps dist/server.js",
     "start:dev": "nodemon --watch dist/ --watch .env",
-    "dev": "npm run build && concurrently 'npm:build:dev' 'npm:start:dev'"
+    "dev": "npm run build && concurrently 'npm:build:dev' 'npm:start:dev'",
+    "web": "serve -p 8080 web/"
   },
   "engines": {
     "node": ">=16"
@@ -23,8 +24,10 @@
   "homepage": "https://github.com/italoubialifernando/api-project-dev#readme",
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
+    "@types/cors": "^2.8.12",
     "@types/express": "^4.17.14",
     "@types/jest": "^29.0.3",
+    "@types/multer": "^1.4.7",
     "@types/node": "^18.7.21",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
@@ -45,9 +48,12 @@
     "@prisma/client": "^4.3.1",
     "@sinclair/typebox": "^0.24.43",
     "ajv-formats": "^2.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-async-errors": "^3.1.1",
-    "express-json-validator-middleware": "^3.0.1"
+    "express-json-validator-middleware": "^3.0.1",
+    "multer": "^1.4.5-lts.1",
+    "serve": "^14.0.1"
   }
 }

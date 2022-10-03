@@ -99,19 +99,28 @@ app.post(
     "/planets/:id(\\d+)/photo",
     upload.single("photo"),
     async (request, response, next) => {
-        console.log("request.file", request.file);
-
         if (!request.file) {
             response.status(400);
             return next("No photo file upload");
         }
 
+        const planetId = Number(request.params.id);
         const photoFilename = request.file.filename;
 
-        response.status(201).json({ photoFilename });
+        try {
+            await prisma.planet.update({
+                where: { id: planetId },
+                data: { photoFilename },
+            });
+            response.status(201).json({ photoFilename });
+        } catch (error) {
+            response.status(404);
+            next("Cannot POST /planets/" + planetId + "/photo");
+        }
     }
 );
 
+app.use("/planets/photos", express.static("uploads"));
 app.use(ValidationErrorMiddleware);
 
 export default app;

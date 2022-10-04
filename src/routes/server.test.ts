@@ -1,6 +1,6 @@
 import supertest from "supertest";
-import { prismaMock } from "./lib/prisma/client.mock";
-import app from "./app";
+import { prismaMock } from "../lib/prisma/client.mock";
+import app from "../app";
 
 const request = supertest(app);
 
@@ -40,7 +40,7 @@ describe("GET /planets", () => {
     });
 });
 
-describe("GET /planet/:id", () => {
+describe("GET /planets/:id", () => {
     test("Valid request", async () => {
         const planet = {
             id: 1,
@@ -56,7 +56,7 @@ describe("GET /planet/:id", () => {
         prismaMock.planet.findUnique.mockResolvedValue(planet);
 
         const response = await request
-            .get("/planet/1")
+            .get("/planets/1")
             .expect(200)
             .expect("Content-Type", /application\/json/);
 
@@ -67,20 +67,20 @@ describe("GET /planet/:id", () => {
         prismaMock.planet.findUnique.mockResolvedValue(null);
 
         const response = await request
-            .get("/planet/23")
+            .get("/planets/23")
             .expect(404)
             .expect("Content-Type", /text\/html/);
 
-        expect(response.text).toContain("Cannot GET /planet/23");
+        expect(response.text).toContain("Cannot GET /planets/23");
     });
 
     test("Invalid planet ID", async () => {
         const response = await request
-            .get("/planet/oafna")
+            .get("/planets/oafna")
             .expect(404)
             .expect("Content-Type", /text\/html/);
 
-        expect(response.text).toContain("Cannot GET /planet/oafna");
+        expect(response.text).toContain("Cannot GET /planets/oafna");
     });
 });
 
@@ -187,22 +187,22 @@ describe("PUT /planets/:id", () => {
         prismaMock.planet.update.mockRejectedValue(new Error("Error"));
 
         const response = await request
-            .put("/planet/23")
+            .put("/planets/23")
             .send({
                 name: "Venus",
-                describe: "horrible planet <3",
+                description: "horrible planet <3",
                 diameter: 324,
                 moons: 0,
             })
             .expect(404)
             .expect("Content-Type", /text\/html/);
 
-        expect(response.text).toContain("Cannot PUT /planet/23");
+        expect(response.text).toContain("Cannot PUT /planets/23");
     });
 
     test("Invalid planet ID", async () => {
         const response = await request
-            .put("/planet/oafna")
+            .put("/planets/oafna")
             .send({
                 name: "Venus",
                 describe: "horrible planet <3",
@@ -212,14 +212,14 @@ describe("PUT /planets/:id", () => {
             .expect(404)
             .expect("Content-Type", /text\/html/);
 
-        expect(response.text).toContain("Cannot PUT /planet/oafna");
+        expect(response.text).toContain("Cannot PUT /planets/oafna");
     });
 });
 
-describe("DELETE /planet/:id", () => {
+describe("DELETE /planets/:id", () => {
     test("Valid request", async () => {
         const response = await request
-            .delete("/planet/1")
+            .delete("/planets/1")
             .expect(204)
             .expect("Access-Control-Allow-Origin", "http://localhost:8080");
 
@@ -231,20 +231,20 @@ describe("DELETE /planet/:id", () => {
         prismaMock.planet.delete.mockRejectedValue(new Error("Error"));
 
         const response = await request
-            .delete("/planet/23")
+            .delete("/planets/23")
             .expect(404)
             .expect("Content-Type", /text\/html/);
 
-        expect(response.text).toContain("Cannot DELETE /planet/23");
+        expect(response.text).toContain("Cannot DELETE /planets/23");
     });
 
     test("Invalid planet ID", async () => {
         const response = await request
-            .delete("/planet/oafna")
+            .delete("/planets/oafna")
             .expect(404)
             .expect("Content-Type", /text\/html/);
 
-        expect(response.text).toContain("Cannot DELETE /planet/oafna");
+        expect(response.text).toContain("Cannot DELETE /planets/oafna");
     });
 });
 

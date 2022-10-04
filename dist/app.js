@@ -8,9 +8,14 @@ require("express-async-errors");
 const cors_1 = __importDefault(require("cors"));
 const client_1 = __importDefault(require("./lib/prisma/client"));
 const validation_1 = require("./lib/validation");
+const corsOption = {
+    origin: "http://localhost:8080",
+};
+const multer_1 = require("./lib/middleware/multer");
+const upload = (0, multer_1.initMulterMiddleware)();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)(corsOption));
 app.get("/planets", async (request, response) => {
     const planets = await client_1.default.planet.findMany();
     response.json(planets);
@@ -61,6 +66,26 @@ app.delete("/planet/:id(\\d+)", async (request, response, next) => {
         next("Cannot DELETE /planet/" + planetId);
     }
 });
+app.post("/planets/:id(\\d+)/photo", upload.single("photo"), async (request, response, next) => {
+    if (!request.file) {
+        response.status(400);
+        return next("No photo file upload");
+    }
+    const planetId = Number(request.params.id);
+    const photoFilename = request.file.filename;
+    try {
+        await client_1.default.planet.update({
+            where: { id: planetId },
+            data: { photoFilename },
+        });
+        response.status(201).json({ photoFilename });
+    }
+    catch (error) {
+        response.status(404);
+        next("Cannot POST /planets/" + planetId + "/photo");
+    }
+});
+app.use("/planets/photos", express_1.default.static("uploads"));
 app.use(validation_1.ValidationErrorMiddleware);
 exports.default = app;
 //# sourceMappingURL=app.js.map

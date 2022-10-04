@@ -1,0 +1,44 @@
+<html>
+    <body>
+        <form action="http://localhost:3030/planets" id="form-add">
+            <label>
+                <p>Name:</p>
+                <input type="text" name="name" />
+            </label>
+
+            <label>
+                <p>Diameter:</p>
+                <input type="number" name="diameter" />
+            </label>
+
+            <label>
+                <p>Moons:</p>
+                <input type="number" name="moons" />
+            </label>
+
+            <input type="submit" value="Add planet" />
+        </form>
+
+        <script>
+            async function addPlanet(event) {
+                event.preventDefault();
+                const form = event.currentTarget;
+                const formData = new FormData(form);
+                const plainFormData = Object.fromEntries(formData.entries());
+                const formDataJsonStrg = JSON.stringify(plainFormData);
+                const url = form.action;
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: formDataJsonStrg,
+                });
+                const planet = await response.json();
+                console.dir(planet);
+            }
+            const addForm = document.getElementById("form-add");
+            addForm.addEventListener("submit", addPlanet);
+        </script>
+    </body>
+</html>

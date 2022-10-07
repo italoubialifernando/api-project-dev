@@ -1,21 +1,26 @@
 import express from "express";
 import "express-async-errors";
-import cors from "cors";
 
 import { ValidationErrorMiddleware } from "./lib/validation";
+import { initSessionMiddleware } from "./lib/middleware/session";
+import { passport } from "./lib/middleware/passport";
+import { initCorsMiddlaware } from "./lib/middleware/cors";
 
 import planetsRoutes from "./routes/planets";
+import authRoutes from "./routes/auth";
 
-const corsOption = {
-    origin: "http://localhost:8080",
-};
 const app = express();
+
+app.use(initSessionMiddleware());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.json());
 
-app.use(cors(corsOption));
+app.use(initCorsMiddlaware());
 
 app.use("/planets", planetsRoutes);
+app.use("/auth", authRoutes);
 
 app.use(ValidationErrorMiddleware);
 

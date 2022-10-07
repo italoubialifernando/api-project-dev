@@ -3,7 +3,7 @@ import express, { Router } from "express";
 import prisma from "../lib/prisma/client";
 
 import { validate, planetSchema, PlanetData } from "../lib/validation";
-
+import { checkAuthorization } from "../lib/middleware/passport";
 import { initMulterMiddleware } from "../lib/middleware/multer";
 
 const upload = initMulterMiddleware();
@@ -33,11 +33,18 @@ router.get("/:id(\\d+)", async (request, response, next) => {
 
 router.post(
     "/",
+    checkAuthorization,
     validate({ body: planetSchema }),
     async (request, response) => {
         const planetData: PlanetData = request.body;
+        const username = request.user?.username as string;
+
         const planet = await prisma.planet.create({
-            data: planetData,
+            data: {
+                ...planetData,
+                createdBy: username,
+                updatedBy: username,
+            },
         });
 
         response.status(201).json(planet);
@@ -46,6 +53,7 @@ router.post(
 
 router.put(
     "/:id(\\d+)",
+    checkAuthorization,
     validate({ body: planetSchema }),
     async (request, response, next) => {
         const planetId = Number(request.params.id);
@@ -65,23 +73,28 @@ router.put(
     }
 );
 
-router.delete("/:id(\\d+)", async (request, response, next) => {
-    const planetId = Number(request.params.id);
+router.delete(
+    "/:id(\\d+)",
+    checkAuthorization,
+    async (request, response, next) => {
+        const planetId = Number(request.params.id);
 
-    try {
-        await prisma.planet.delete({
-            where: { id: planetId },
-        });
+        try {
+            await prisma.planet.delete({
+                where: { id: planetId },
+            });
 
-        response.status(204).end();
-    } catch (e) {
-        response.status(404);
-        next("Cannot DELETE /planets/" + planetId);
+            response.status(204).end();
+        } catch (e) {
+            response.status(404);
+            next("Cannot DELETE /planets/" + planetId);
+        }
     }
-});
+);
 
 router.post(
     "/:id(\\d+)/photo",
+    checkAuthorization,
     upload.single("photo"),
     async (request, response, next) => {
         if (!request.file) {

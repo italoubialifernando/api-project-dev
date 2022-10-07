@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const client_1 = __importDefault(require("../lib/prisma/client"));
 const validation_1 = require("../lib/validation");
+const passport_1 = require("../lib/middleware/passport");
 const multer_1 = require("../lib/middleware/multer");
 const upload = (0, multer_1.initMulterMiddleware)();
 const router = (0, express_1.Router)();
@@ -47,14 +48,14 @@ router.get("/:id(\\d+)", async (request, response, next) => {
     }
     response.json(planet);
 });
-router.post("/", (0, validation_1.validate)({ body: validation_1.planetSchema }), async (request, response) => {
+router.post("/", passport_1.checkAuthorization, (0, validation_1.validate)({ body: validation_1.planetSchema }), async (request, response) => {
     const planetData = request.body;
     const planet = await client_1.default.planet.create({
         data: planetData,
     });
     response.status(201).json(planet);
 });
-router.put("/:id(\\d+)", (0, validation_1.validate)({ body: validation_1.planetSchema }), async (request, response, next) => {
+router.put("/:id(\\d+)", passport_1.checkAuthorization, (0, validation_1.validate)({ body: validation_1.planetSchema }), async (request, response, next) => {
     const planetId = Number(request.params.id);
     const planetData = request.body;
     try {
@@ -69,7 +70,7 @@ router.put("/:id(\\d+)", (0, validation_1.validate)({ body: validation_1.planetS
         next("Cannot PUT /planets/" + planetId);
     }
 });
-router.delete("/:id(\\d+)", async (request, response, next) => {
+router.delete("/:id(\\d+)", passport_1.checkAuthorization, async (request, response, next) => {
     const planetId = Number(request.params.id);
     try {
         await client_1.default.planet.delete({
@@ -82,7 +83,7 @@ router.delete("/:id(\\d+)", async (request, response, next) => {
         next("Cannot DELETE /planets/" + planetId);
     }
 });
-router.post("/:id(\\d+)/photo", upload.single("photo"), async (request, response, next) => {
+router.post("/:id(\\d+)/photo", passport_1.checkAuthorization, upload.single("photo"), async (request, response, next) => {
     if (!request.file) {
         response.status(400);
         return next("No photo file upload");
